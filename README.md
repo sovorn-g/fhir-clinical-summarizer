@@ -19,6 +19,12 @@ uv run pytest                   # should be green
 uv run python -c "from clinical_core.fhir import load_bundle; print(load_bundle('fixtures/alpha.json').patient)"
 ```
 
+If you *intentionally* change FHIR extraction, update the syrupy snapshots:
+
+```bash
+uv run pytest --snapshot-update   # review the diff in tests/__snapshots__ before committing
+```
+
 ## What it does (target)
 
 1. **Ingest** a Synthea FHIR R4 bundle and normalize it into a `PatientRecord` whose every
