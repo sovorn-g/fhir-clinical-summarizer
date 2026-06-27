@@ -53,14 +53,16 @@
       "id": "3",
       "subject": "Phase 2 — Summarization Pipeline",
       "description": "Design prompt with explicit sections + only-use-provided-facts instruction. Render PatientRecord -> compact structured context (token budget aware). Call LLM with structured output; produce Summary with fixed section order (Problems, Medications, Recent Encounters, Key Results, Allergies) and missing-data placeholders (no_data flag, renderer owns _No data recorded._). summarize(record) -> Summary. Acceptance: readable, correctly sectioned summaries for 5 sample patients via CLI.",
-      "status": "in_progress",
+      "status": "completed",
       "activeForm": "Building summarization pipeline",
       "metadata": {
         "agentType": "normal",
         "executionStats": {
           "startedAt": 1782578935656,
-          "inputTokens": 0,
-          "outputTokens": 0
+          "completedAt": 1782579365486,
+          "durationMs": 429830,
+          "inputTokens": 291698,
+          "outputTokens": 6950
         }
       },
       "blocks": [
@@ -70,16 +72,21 @@
         "2"
       ],
       "createdAt": 1782577299145,
-      "updatedAt": 1782578935657
+      "updatedAt": 1782579365487
     },
     {
       "id": "4",
       "subject": "Phase 3 — Evaluation & Guardrails",
       "description": "Implement clinical_core/eval/faithfulness.py: rules layer (dangling resource_id -> auto unsupported) then LLM-as-judge (claude-opus-4-8, sees only bullet text + referenced normalized resource JSON, returns supported|partial|unsupported via structured output). FaithfulnessReport model, THRESHOLD=0.95 strict (partial != supported). Regenerate-on-failure once in pipeline.summarize(). 10-patient eval set with markdown pass/fail report. Acceptance: ≥95% of sampled claims trace to source.",
-      "status": "pending",
+      "status": "in_progress",
       "activeForm": "Building evaluation & guardrails",
       "metadata": {
-        "agentType": "normal"
+        "agentType": "normal",
+        "executionStats": {
+          "startedAt": 1782579365489,
+          "inputTokens": 0,
+          "outputTokens": 0
+        }
       },
       "blocks": [
         "5"
@@ -88,7 +95,7 @@
         "3"
       ],
       "createdAt": 1782577299145,
-      "updatedAt": 1782577302252
+      "updatedAt": 1782579365490
     },
     {
       "id": "5",

@@ -32,4 +32,4 @@ data/synthea/*.json
 .streamlit/secrets.toml
 
 # Cymbal / agent
-.pi/state*
+.pi/state*eval_report.md
