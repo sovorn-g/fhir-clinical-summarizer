@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from clinical_core.fhir import load_bundle
+from summarizer.pipeline import summarize
 from summarizer.render import render_record
 
 
@@ -19,6 +20,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("bundle", type=Path, help="path to a Synthea FHIR R4 .json bundle")
     parser.add_argument(
         "--render", action="store_true", help="print the compact rendered LLM context too"
+    )
+    parser.add_argument(
+        "--summarize",
+        action="store_true",
+        help="run the full summarization pipeline (needs LLM_MODEL + API key in .env)",
     )
     args = parser.parse_args(argv)
 
@@ -41,6 +47,15 @@ def main(argv: list[str] | None = None) -> int:
         print()
         print("=== rendered context ===")
         print(render_record(record))
+    if args.summarize:
+        print()
+        print("=== summary ===")
+        summary = summarize(record)
+        print(summary.to_markdown())
+        print(
+            f"\n[model={summary.model} in={summary.input_tokens} out={summary.output_tokens} "
+            f"cost=${summary.cost_usd:.4f}]"
+        )
     return 0
 
 
