@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fhir-clinical-summarizer"
+version = "0.1.0"
+description = "Turn a Synthea FHIR R4 patient bundle into a concise, faithful clinician-ready summary."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "portfolio" }]
+dependencies = [
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "litellm>=1.40",
+    "streamlit>=1.33",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "syrupy>=4.6",
+    "ruff>=0.5",
+]
+
+[project.urls]
+Documentation = "https://github.com/clinical-ai-portfolio/fhir-clinical-summarizer"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/clinical_core", "src/summarizer"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra -q"
+filterwarnings = [
+    "ignore::DeprecationWarning:litellm.*",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["clinical_core", "summarizer"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W", "C90"]
+ignore = ["E501"]  # line length handled by formatter; we prefer readable long lines
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["clinical_core", "summarizer"]

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# uv — uv.lock IS committed for reproducibility
+
+# Tooling
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Env / secrets
+.env
+.env.local
+
+# Generated Synthea data — fixtures/ are committed intentionally
+data/synthea/*.json
+!fixtures/*.json
+
+# OS
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Cymbal / agent
+.pi/state*
