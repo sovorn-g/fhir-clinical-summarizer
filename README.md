@@ -41,15 +41,15 @@ uv run pytest --snapshot-update   # review the diff in tests/__snapshots__ befor
 
 ```mermaid
 flowchart LR
-  B[Synthea FHIR R4 bundle\n.json file] --> L[clinical_core.fhir\nload_bundle]
-  L --> PR[PatientRecord\n+ SourceRef per fact]
-  PR --> R[summarizer.render\nprovenance-tagged context]
-  R --> LLM[LLMClient (LiteLLM)\nstructured output]
-  LLM --> S[Summary — 5 fixed sections\nbullets carry source_refs]
-  S --> F[clinical_core.eval\nfaithfulness: rules → judge]
-  F -->|score < 0.95| REGEN[regenerate once\nwith unsupported bullets fed back]
+  B["Synthea FHIR R4 bundle<br/>.json file"] --> L["clinical_core.fhir<br/>load_bundle"]
+  L --> PR["PatientRecord<br/>+ SourceRef per fact"]
+  PR --> R["summarizer.render<br/>provenance-tagged context"]
+  R --> LLM["LLMClient via LiteLLM<br/>structured output"]
+  LLM --> S["Summary — 5 fixed sections<br/>bullets carry source_refs"]
+  S --> F["clinical_core.eval<br/>faithfulness: rules → judge"]
+  F -->|score below 0.95| REGEN["regenerate once<br/>unsupported bullets fed back"]
   REGEN --> LLM
-  F -->|report| UI[CLI / Streamlit UI]
+  F -->|report| UI["CLI / Streamlit UI"]
 ```
 
 Key design idea: **provenance flows all the way through**. Every normalized clinical fact carries a
