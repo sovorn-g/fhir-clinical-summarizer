@@ -3,10 +3,10 @@
 FHIR Clinical Summarizer turns a synthetic FHIR R4 patient bundle into a short,
 clinician-readable patient summary with a faithfulness check for every bullet.
 
-It is built as a portfolio demo for clinical AI safety patterns: grounded
-summarization, source provenance, missing-data discipline, and a visible
-verification report. It is not a medical device and should not be used with real
-patient data.
+The app is designed to make each summary claim traceable to the source bundle,
+so readers can see what the model used instead of trusting a fluent paragraph on
+its own. It is not a medical device and should not be used with real patient
+data.
 
 ## What You Can Do
 
@@ -173,5 +173,5 @@ tests/               pytest coverage and snapshot tests
 eval_report.md       generated evaluation report, gitignored
 ```
 
-For implementation contracts and project history, see `CONTRACTS.md` and
+For lower-level implementation details, see `CONTRACTS.md` and
 `execute-plan.md`.
