@@ -1,8 +1,7 @@
 """Provider-agnostic LLM wrapper around LiteLLM (CONTRACTS §7).
 
 One door to the model: ``complete(system, user, schema) -> BaseModel``. Configure provider +
-model + key in ``.env`` (``LLM_MODEL`` and the matching ``*_API_KEY``); LiteLLM resolves any
-``provider/model`` string with no per-provider code. Structured output is JSON-validated with
+model + key in ``.env`` (``LLM_MODEL`` and ``API_KEY``). Structured output is JSON-validated with
 Pydantic so ``Summary`` / judge verdicts come back typed. Token + cost are logged per call and
 exposed on ``Summary``.
 
@@ -25,8 +24,8 @@ log = logging.getLogger(__name__)
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 
 _SYSTEM_JSON_SUFFIX = (
-    "\n\nRespond with a single JSON object that conforms exactly to the provided schema. "
-    "Output ONLY the JSON, no prose, no markdown fences."
+    "\n\nRespond with a single JSON object that conforms exactly to this JSON Schema:\n"
+    "{schema}\n\nOutput ONLY the JSON object, no prose, no markdown fences."
 )
 
 
@@ -44,12 +43,14 @@ class LLMClient(Generic[BaseModelT]):
         *,
         temperature: float | None = None,
         max_tokens: int | None = None,
+        api_key: str | None = None,
         raw_completion=None,
     ) -> None:
         s = get_settings()
         self.model = model or s.llm_model
         self.temperature = temperature if temperature is not None else s.clinical_llm_temperature
         self.max_tokens = max_tokens or s.clinical_llm_max_tokens
+        self.api_key = api_key if api_key is not None else s.api_key
         self._raw_completion = raw_completion  # if None, lazily import litellm on first call
 
     # -- public API -----------------------------------------------------------
@@ -73,23 +74,28 @@ class LLMClient(Generic[BaseModelT]):
     # -- internals ------------------------------------------------------------
     def _call(self, system: str, user: str, schema: type[BaseModelT]) -> LLMResult[BaseModelT]:
         completion = self._raw_completion or self._litellm_completion()
+        schema_json = json.dumps(schema.model_json_schema(), ensure_ascii=False)
         messages = [
-            {"role": "system", "content": system + _SYSTEM_JSON_SUFFIX},
+            {"role": "system", "content": system + _SYSTEM_JSON_SUFFIX.format(schema=schema_json)},
             {"role": "user", "content": user},
         ]
-        response = completion(
-            model=self.model,
-            messages=messages,
-            temperature=self.temperature,
-            max_tokens=self.max_tokens,
-            response_format={"type": "json_object"},
-        )
+        request = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+            "response_format": {"type": "json_object"},
+        }
+        if self.api_key:
+            request["api_key"] = self.api_key
+        response = completion(**request)
         text = _extract_text(response)
         try:
             data = json.loads(text)
         except json.JSONDecodeError as exc:
             raise LLMOutputError(
-                f"non-JSON response from {self.model}: {exc}\n---\n{text[:500]}"
+                f"non-JSON response from {self.model}: {exc}\n--- start ---\n{text[:800]}"
+                f"\n--- end ---\n{text[-800:]}"
             ) from exc
         try:
             parsed = schema.model_validate(data)

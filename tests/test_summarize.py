@@ -12,6 +12,7 @@ def test_prompt_guardrail_present():
     assert "ONLY facts present" in SYSTEM_PROMPT
     assert "source_refs" in SYSTEM_PROMPT
     assert "do NOT state" in SYSTEM_PROMPT.lower() or "not state" in SYSTEM_PROMPT.lower()
+    assert "at most 2 bullets" in SYSTEM_PROMPT
 
 
 def test_render_includes_all_five_sections(alpha_record):

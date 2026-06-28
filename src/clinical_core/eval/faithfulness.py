@@ -310,11 +310,11 @@ def run_eval(*, n: int, fixtures: bool, out, live: bool) -> int:
             from summarizer.pipeline import summarize as summarize_live
 
             summary = summarize_live(rec)
+            report = summary.faithfulness or evaluate(summary, rec, judge=None)
         else:
             summary = _build_mock_summary(rec)
-        rows.append(
-            (b.stem, summary, evaluate(summary, rec, judge=None if not live else "sentinel"))
-        )
+            report = evaluate(summary, rec, judge=None)
+        rows.append((b.stem, summary, report))
     out.write_text(_render_report(rows, live=live), encoding="utf-8")
     passing = sum(1 for _n, _s, r in rows if r.passed)
     print(f"wrote {out}  pass: {passing}/{len(rows)}")

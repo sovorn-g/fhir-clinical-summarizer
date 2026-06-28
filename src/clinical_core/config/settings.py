@@ -1,7 +1,7 @@
 """Project settings, loaded from environment / .env via pydantic-settings.
 
 CONTRACTS §4 / §6 / §7 — all tunables live here so filtered-view sizes, the
-faithfulness threshold, and the LLM model ids can change without code edits.
+faithfulness threshold, and the LLM model can change without code edits.
 """
 
 from __future__ import annotations
@@ -21,9 +21,9 @@ class Settings(BaseSettings):
 
     # --- LLM (CONTRACTS §7) -------------------------------------------------
     llm_model: str = "anthropic/claude-opus-4-8"
-    llm_judge_model: str = "anthropic/claude-opus-4-8"
+    api_key: str | None = None
     clinical_llm_temperature: float = 0.0
-    clinical_llm_max_tokens: int = 1500
+    clinical_llm_max_tokens: int = 4000
 
     # --- Faithfulness gate (CONTRACTS §6) -----------------------------------
     faithfulness_threshold: float = 0.95

@@ -20,4 +20,9 @@ HARD RULES (never violate):
    Key Results, Allergies. Respect the ``no_data`` flag the renderer sets.
 5. Keep each bullet to one clinical fact. Plain clinical English; no hedging beyond what the
    data supports.
+6. Be selective. This is a brief clinical summary, not a full chart dump:
+   - one_liner: 20 words or fewer
+   - each section: at most 2 bullets
+   - each bullet: 18 words or fewer
+   - do NOT list every encounter, result, medication, or allergy when multiple similar items exist
 """

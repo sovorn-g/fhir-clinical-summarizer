@@ -34,11 +34,13 @@ def summarize(
 ) -> Summary:
     """Produce a clinician-ready ``Summary`` for one patient record, with a faithfulness guardrail.
 
-    Pass a configured ``LLMClient`` (overrides default model). Pass a ``judge`` callable
-    ``(system, user, schema) -> BaseModel`` to enable the LLM-as-judge layer; if None, only the
-    rules layer runs (CONTRACTS §6). When the first summary scores below threshold, the pipeline
-    regenerates ONCE with the unsupported bullets fed back; if it still fails, the summary is
-    returned with ``faithfulness.passed = False`` surfaced (never silently shipped).
+    By default, the faithfulness layer is rules-only: every bullet must carry source refs, and
+    those refs must exist in the normalized FHIR record. Tests or advanced callers can pass a
+    ``judge`` callable to add semantic LLM-as-judge verification.
+
+    When the first summary scores below threshold, the pipeline regenerates ONCE with the
+    unsupported bullets fed back; if it still fails, the summary is returned with
+    ``faithfulness.passed = False`` surfaced (never silently shipped).
     """
     client = client or LLMClient()
     return _summarize_with_guardrail(record, client, judge=judge)

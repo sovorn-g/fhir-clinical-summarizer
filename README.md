@@ -61,12 +61,12 @@ Then edit `.env`:
 
 ```bash
 LLM_MODEL=anthropic/claude-opus-4-8
-ANTHROPIC_API_KEY=sk-ant-...
+API_KEY=sk-...
 ```
 
-Other LiteLLM provider/model strings work as long as the matching API key is set
-in the environment. In the Streamlit app, uncheck `Rules-only (no API key)` to
-call the configured model.
+Other LiteLLM provider/model strings work as long as the key matches that
+provider. In the Streamlit app, uncheck `Rules-only (no API key)` to call the
+configured model.
 
 ## Command Line Usage
 
@@ -80,6 +80,18 @@ Run the full summary pipeline:
 
 ```bash
 uv run python -m summarizer.cli fixtures/alpha.json --summarize
+```
+
+Generate a sample markdown summary from the synthetic alpha fixture:
+
+```bash
+uv run python scripts/sample.py
+```
+
+If a model returns truncated JSON, retry with a larger output budget:
+
+```bash
+uv run python scripts/sample.py --max-tokens 6000
 ```
 
 Run the faithfulness evaluation:
@@ -172,6 +184,3 @@ fixtures/            committed synthetic patients used by tests and demo
 tests/               pytest coverage and snapshot tests
 eval_report.md       generated evaluation report, gitignored
 ```
-
-For lower-level implementation details, see `CONTRACTS.md` and
-`execute-plan.md`.
